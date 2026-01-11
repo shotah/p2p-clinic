@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Worker",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/worker/src/index.ts",
+            "cwd": "${workspaceFolder}/worker",
+            "runtimeArgs": ["--loader", "ts-node/esm"],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        },
+        {
+            "name": "Debug Web App",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/web/node_modules/.bin/vite",
+            "cwd": "${workspaceFolder}/web",
+            "args": ["--mode", "development"],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "console": "integratedTerminal",
+            "skipFiles": ["<node_internals>/**"]
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug Full Stack",
+            "configurations": ["Debug Worker", "Debug Web App"],
+            "stopAll": true
+        }
+    ]
+}

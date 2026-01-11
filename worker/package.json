@@ -1,0 +1,21 @@
+{
+  "name": "p2p-clinic-worker",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --max-warnings 0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260109.0",
+    "@eslint/js": "^9.39.2",
+    "eslint": "^9.39.2",
+    "globals": "^17.0.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.52.0",
+    "wrangler": "^4.58.0"
+  }
+}

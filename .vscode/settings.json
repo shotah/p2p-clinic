@@ -1,0 +1,293 @@
+{
+  // Spell checker configuration
+  "cSpell.words": [
+    "AFLAGS",
+    "AUTOCONFIRM",
+    "Awoly",
+    "ciphertext",
+    "cloudflare",
+    "contextual",
+    "cosine",
+    "CRDT",
+    "darthsim",
+    "dotenv",
+    "DTLS",
+    "embeddings",
+    "eslintcache",
+    "gotrue",
+    "GUCS",
+    "healthcheck",
+    "HMAC",
+    "IMGPROXY",
+    "inbucket",
+    "indexeddb",
+    "initdb",
+    "isready",
+    "ivfflat",
+    "jscoverage",
+    "keyauth",
+    "LOGFLARE",
+    "mcp",
+    "miniflare",
+    "openai",
+    "PGRST",
+    "pgvector",
+    "pids",
+    "pooler",
+    "postgrest",
+    "rag",
+    "retrieval",
+    "secretphrase",
+    "semantic",
+    "SIGNUP",
+    "similarity",
+    "SRTP",
+    "stylelintcache",
+    "supabase",
+    "supabaserealtime",
+    "URLPATHS",
+    "vectorization",
+    "VITE",
+    "WEBP",
+    "webrtc",
+    "wrangler",
+    "XVCJ"
+  ],
+
+  // TypeScript configuration
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+
+  // ESLint configuration
+  "eslint.workingDirectories": ["web", "worker"],
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+
+  // File associations
+  "files.associations": {
+    "*.toml": "toml",
+    "*.sql": "sql",
+    "wrangler.toml": "toml",
+    "supabase/config.toml": "toml"
+  },
+
+  // Emmet configuration
+  "emmet.includeLanguages": {
+    "typescript": "html",
+    "typescriptreact": "html"
+  },
+
+  // Auto-save and formatting
+  "files.autoSave": "onFocusChange",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+
+  // Tailwind CSS IntelliSense
+  "tailwindCSS.includeLanguages": {
+    "typescript": "html",
+    "typescriptreact": "html"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+
+  // Supabase configuration
+  "supabase.projectId": "mcp-test",
+  "supabase.dbUrl": "postgresql://postgres:postgres@localhost:54322/postgres",
+
+  // Docker configuration
+  "docker.showStartPage": false,
+  "docker.defaultRegistryPath": "",
+
+  // Git configuration
+  "git.ignoreLimitWarning": true,
+  "git.autofetch": true,
+
+  // Terminal configuration
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.profiles.windows": {
+    "PowerShell": {
+      "source": "PowerShell",
+      "args": ["-NoLogo"]
+    }
+  },
+
+  // Workspace-specific settings
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.git": true,
+    "**/coverage": true,
+    "**/.next": true,
+    "**/.nuxt": true,
+    "**/.vscode": true
+  },
+
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.git": true,
+    "**/coverage": true,
+    "**/.next": true,
+    "**/.nuxt": true
+  },
+
+  // Language-specific settings
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[sql]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[toml]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+  "[yaml]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true
+  },
+
+  // Prettier configuration
+  "prettier.semi": true,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "es5",
+  "prettier.tabWidth": 2,
+  "prettier.useTabs": false,
+
+  // Extensions recommendations
+  "extensions.recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-vscode.vscode-typescript-next",
+    "supabase.supabase",
+    "ms-vscode.vscode-json",
+    "redhat.vscode-yaml",
+    "ms-vscode.powershell",
+    "ms-vscode.vscode-docker",
+    "github.vscode-pull-request-github",
+    "ms-vscode.vscode-github-actions"
+  ],
+
+  // Task configuration
+  "tasks.version": "2.0.0",
+  "tasks.tasks": [
+    {
+      "label": "Start Development",
+      "type": "shell",
+      "command": "npm run dev",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup Project",
+      "type": "shell",
+      "command": "npm run setup",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Supabase",
+      "type": "shell",
+      "command": "npm run dev:supabase",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Worker",
+      "type": "shell",
+      "command": "npm run dev:worker",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Start Web App",
+      "type": "shell",
+      "command": "npm run dev:web",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new"
+      },
+      "problemMatcher": []
+    }
+  ],
+
+  // Launch configuration
+  "launch.version": "0.2.0",
+  "launch.configurations": [
+    {
+      "name": "Debug Worker",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/worker/src/index.ts",
+      "cwd": "${workspaceFolder}/worker",
+      "runtimeArgs": ["--loader", "ts-node/esm"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  ]
+}
