@@ -5,8 +5,8 @@ compatibility_date = "2024-11-01"
 # KV for share codes and peer announcements (auto-expire)
 [[kv_namespaces]]
 binding = "KV"
-id = "p2p-clinic-kv"
-preview_id = "p2p-clinic-kv-preview"
+id = "dcc764ce7d5f42d3a5849a3ec3cc3a14"
+preview_id = "6645c7715e5e402eb26bb70e321285c2"
 
 # Durable Objects for WebSocket signaling (optional)
 [[durable_objects.bindings]]
@@ -15,4 +15,4 @@ class_name = "Room"
 
 [[migrations]]
 tag = "v1"
-new_classes = ["Room"]
+new_sqlite_classes = ["Room"]

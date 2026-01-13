@@ -17,10 +17,10 @@ All 7 foundational features are implemented:
 
 ### High Priority - Wire It All Together
 
-- [ ] **Create Cloudflare KV namespace**
+- [x] **Create Cloudflare KV namespace** ✅
 
   ```bash
-  wrangler kv:namespace create "KV"
+  wrangler kv namespace create "KV"
   # Update wrangler.toml with returned IDs
   ```
 
@@ -311,7 +311,7 @@ KV (Key-Value) storage is used for share codes and peer announcements.
 
 ```bash
 cd worker
-npx wrangler kv:namespace create "KV"
+npx wrangler kv namespace create "KV"
 ```
 
 Output will look like:
@@ -328,7 +328,7 @@ id = "abc123def456..."
 **Create the preview namespace (for local dev):**
 
 ```bash
-npx wrangler kv:namespace create "KV" --preview
+npx wrangler kv namespace create "KV" --preview
 ```
 
 Output:
@@ -363,7 +363,7 @@ class_name = "Room"
 
 [[migrations]]
 tag = "v1"
-new_classes = ["Room"]
+new_sqlite_classes = ["Room"]  # Required for free tier
 ```
 
 ---
@@ -530,7 +530,7 @@ make run
 **"KV namespace not found"**
 
 - Make sure you updated `wrangler.toml` with the correct IDs
-- IDs from `kv:namespace create` must match exactly
+- IDs from `kv namespace create` must match exactly
 
 **"Account ID required"**
 
@@ -551,8 +551,8 @@ make run
 - [ ] Get Account ID from dashboard
 - [ ] Create API Token with Workers permissions
 - [ ] Run `npx wrangler login` OR set env vars
-- [ ] Create KV namespace: `npx wrangler kv:namespace create "KV"`
-- [ ] Create preview KV: `npx wrangler kv:namespace create "KV" --preview`
+- [ ] Create KV namespace: `npx wrangler kv namespace create "KV"`
+- [ ] Create preview KV: `npx wrangler kv namespace create "KV" --preview`
 - [ ] Update `worker/wrangler.toml` with KV IDs
 - [ ] Test locally: `make dev-worker`
 - [ ] Deploy: `cd worker && npm run deploy`

@@ -257,14 +257,14 @@ cf-kv-create:
 	@echo "Copy the IDs from the output into worker/wrangler.toml"
 	@echo ""
 	@echo "=== Production namespace ==="
-	npx --prefix worker wrangler kv:namespace create "KV"
+	npx --prefix worker wrangler kv namespace create "KV"
 	@echo ""
 	@echo "=== Preview namespace (for local dev) ==="
-	npx --prefix worker wrangler kv:namespace create "KV" --preview
+	npx --prefix worker wrangler kv namespace create "KV" --preview
 	@echo ""
 	@echo "Done! Update worker/wrangler.toml with the IDs above."
 
 # List existing KV namespaces
 cf-kv-list:
 	@echo "Listing KV namespaces..."
-	npx --prefix worker wrangler kv:namespace list
+	npx --prefix worker wrangler kv namespace list
