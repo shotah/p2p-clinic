@@ -137,6 +137,24 @@ New users see an onboarding page:
 - Dropdown shows all orgs with their assigned colors
 - Switch instantly between orgs
 
+### Leaving an Org (P2P Sovereignty)
+
+Each peer has **full sovereignty** over their local data. When you "Leave" an org:
+
+1. **Sync stops** - No more WebRTC connections for that room
+2. **Local data deleted** - Yjs document removed from IndexedDB
+3. **Org metadata deleted** - Removed from your org list
+4. **Server unaffected** - Room announcements expire via TTL naturally
+5. **Other peers unaffected** - They keep their copies and continue syncing
+
+**Why no "delete for everyone":**
+
+- Goes against P2P philosophy of peer sovereignty
+- Would require owner/admin concept and authentication
+- Opens abuse vectors (malicious deletion by bad actors)
+- Adds significant complexity for minimal benefit
+- In P2P, each peer chooses what to keep
+
 ## Share Code Design
 
 - **One-time use**: Share codes expire after first use or 5-minute timeout

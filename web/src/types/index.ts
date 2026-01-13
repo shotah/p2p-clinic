@@ -12,6 +12,7 @@ export interface Org {
   name: string;
   color: string; // Hex color for UI identification
   roomId?: string; // Permanent room ID for P2P sync (undefined = local only)
+  passwordHash?: string; // PBKDF2 hash for password verification (never plaintext)
   isDefault?: boolean; // First org created, usually "Personal"
   createdAt: string; // ISO date
 }

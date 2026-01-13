@@ -129,3 +129,116 @@ export function getDataStats(maps: BackupMaps): {
     events: maps.eventsMap.size,
   };
 }
+
+/**
+ * Export contacts as vCard format (.vcf)
+ */
+export function exportContactsVCard(contacts: Contact[], orgName: string): void {
+  const vcards = contacts.map((contact) => {
+    const lines = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      `N:${contact.lastName || ''};${contact.firstName || ''};;;`,
+      `FN:${contact.firstName} ${contact.lastName}`.trim(),
+    ];
+
+    if (contact.email) {
+      lines.push(`EMAIL:${contact.email}`);
+    }
+    if (contact.phone) {
+      lines.push(`TEL:${contact.phone}`);
+    }
+    if (contact.company) {
+      lines.push(`ORG:${contact.company}`);
+    }
+    if (contact.notes) {
+      lines.push(`NOTE:${contact.notes.replace(/\n/g, '\\n')}`);
+    }
+
+    lines.push('END:VCARD');
+    return lines.join('\r\n');
+  });
+
+  const vcf = vcards.join('\r\n');
+  const blob = new Blob([vcf], { type: 'text/vcard' });
+  const url = URL.createObjectURL(blob);
+
+  const safeName = orgName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+  const filename = `${safeName}-contacts.vcf`;
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Format a date for iCalendar format (YYYYMMDDTHHMMSSZ)
+ */
+function formatICalDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+}
+
+/**
+ * Export calendar events as iCalendar format (.ics)
+ */
+export function exportEventsICS(events: CalendarEvent[], orgName: string): void {
+  const now = formatICalDate(new Date().toISOString());
+
+  const vevents = events.map((event) => {
+    const lines = [
+      'BEGIN:VEVENT',
+      `UID:${event.id}@p2p-clinic`,
+      `DTSTAMP:${now}`,
+      `DTSTART:${formatICalDate(event.startDate)}`,
+      `DTEND:${formatICalDate(event.endDate)}`,
+      `SUMMARY:${event.title}`,
+    ];
+
+    if (event.description) {
+      lines.push(`DESCRIPTION:${event.description.replace(/\n/g, '\\n')}`);
+    }
+
+    // Add reminders as VALARM
+    for (const minutes of event.reminders) {
+      lines.push(
+        'BEGIN:VALARM',
+        'ACTION:DISPLAY',
+        `TRIGGER:-PT${minutes}M`,
+        `DESCRIPTION:${event.title}`,
+        'END:VALARM'
+      );
+    }
+
+    lines.push('END:VEVENT');
+    return lines.join('\r\n');
+  });
+
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//P2P Clinic//EN',
+    'CALSCALE:GREGORIAN',
+    `X-WR-CALNAME:${orgName}`,
+    ...vevents,
+    'END:VCALENDAR',
+  ].join('\r\n');
+
+  const blob = new Blob([ics], { type: 'text/calendar' });
+  const url = URL.createObjectURL(blob);
+
+  const safeName = orgName.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+  const filename = `${safeName}-calendar.ics`;
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}

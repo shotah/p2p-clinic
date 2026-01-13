@@ -23,7 +23,8 @@ endif
         type-check type-check-web type-check-worker \
         test build build-web build-worker \
         dev dev-web dev-worker run \
-        update update-web update-worker update-check update-check-web update-check-worker
+        update update-web update-worker update-check update-check-web update-check-worker \
+        cf-login cf-whoami cf-deploy cf-tail cf-kv-create cf-kv-list
 
 # Default target
 help:
@@ -63,6 +64,14 @@ help:
 	@echo ""
 	@echo "  Testing:"
 	@echo "    make test             Run all tests"
+	@echo ""
+	@echo "  Cloudflare (Wrangler):"
+	@echo "    make cf-login         Login to Cloudflare (opens browser)"
+	@echo "    make cf-whoami        Check current Cloudflare auth status"
+	@echo "    make cf-deploy        Deploy worker to Cloudflare"
+	@echo "    make cf-tail          Stream live logs from deployed worker"
+	@echo "    make cf-kv-create     Create KV namespaces (prod + preview)"
+	@echo "    make cf-kv-list       List existing KV namespaces"
 	@echo ""
 
 # ============================================================================
@@ -214,3 +223,48 @@ endif
 test: type-check lint
 	@echo "All checks passed!"
 	@echo "(Add test runner when tests are written)"
+
+# ============================================================================
+# Cloudflare (Wrangler)
+# See TODO.md "Deployment Setup Guide" for full setup instructions
+# ============================================================================
+
+# Login to Cloudflare (interactive - opens browser)
+cf-login:
+	@echo "Logging into Cloudflare..."
+	@echo "This will open a browser window for authentication."
+	npx --prefix worker wrangler login
+
+# Check current authentication status
+cf-whoami:
+	@echo "Checking Cloudflare auth status..."
+	npx --prefix worker wrangler whoami
+
+# Deploy worker to Cloudflare production
+cf-deploy: type-check-worker lint-worker
+	@echo "Deploying worker to Cloudflare..."
+	$(NPM) run deploy --prefix worker
+
+# Stream live logs from deployed worker
+cf-tail:
+	@echo "Streaming logs from deployed worker (Ctrl+C to stop)..."
+	npx --prefix worker wrangler tail
+
+# Create KV namespaces (run once during initial setup)
+cf-kv-create:
+	@echo ""
+	@echo "Creating KV namespaces..."
+	@echo "Copy the IDs from the output into worker/wrangler.toml"
+	@echo ""
+	@echo "=== Production namespace ==="
+	npx --prefix worker wrangler kv:namespace create "KV"
+	@echo ""
+	@echo "=== Preview namespace (for local dev) ==="
+	npx --prefix worker wrangler kv:namespace create "KV" --preview
+	@echo ""
+	@echo "Done! Update worker/wrangler.toml with the IDs above."
+
+# List existing KV namespaces
+cf-kv-list:
+	@echo "Listing KV namespaces..."
+	npx --prefix worker wrangler kv:namespace list

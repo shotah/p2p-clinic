@@ -11,7 +11,7 @@ import './pages.css';
 
 interface OnboardingPageProps {
   onCreateOrg: (name: string, isShared: boolean) => Promise<Org>;
-  onJoinOrg: (shareCode: string, password: string) => Promise<void>;
+  onJoinOrg: (shareCode: string, password: string, name: string) => Promise<void>;
 }
 
 type Step = 'choice' | 'create' | 'join';
@@ -25,6 +25,7 @@ export function OnboardingPage({
   const [isShared, setIsShared] = useState(false);
   const [shareCode, setShareCode] = useState('');
   const [password, setPassword] = useState('');
+  const [joinOrgName, setJoinOrgName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,12 +58,16 @@ export function OnboardingPage({
       setError('Please enter the organization password');
       return;
     }
+    if (!joinOrgName.trim()) {
+      setError('Please enter a name for this organization');
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
 
     try {
-      await onJoinOrg(shareCode.trim(), password);
+      await onJoinOrg(shareCode.trim(), password, joinOrgName.trim());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to join org');
     } finally {
@@ -190,6 +195,20 @@ export function OnboardingPage({
               />
               <p className="form-hint">
                 This was shared separately (via call/text)
+              </p>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="joinOrgName">Name for this Org (local)</label>
+              <input
+                id="joinOrgName"
+                type="text"
+                value={joinOrgName}
+                onChange={(e) => setJoinOrgName(e.target.value)}
+                placeholder="e.g., Work, Family Team"
+              />
+              <p className="form-hint">
+                How you want to identify this org on your device
               </p>
             </div>
 

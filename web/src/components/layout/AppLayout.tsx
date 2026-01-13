@@ -1,6 +1,8 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import type { Org } from '@/types';
 import { OrgSwitcher } from './OrgSwitcher';
+import { GlobalSearch } from './GlobalSearch';
+import { OfflineIndicator } from './OfflineIndicator';
 import './layout.css';
 
 interface AppLayoutProps {
@@ -18,6 +20,7 @@ export function AppLayout({
 }: AppLayoutProps) {
   return (
     <div className="app-layout">
+      <OfflineIndicator />
       <nav className="app-nav">
         <div className="nav-brand">P2P Clinic</div>
         <div className="nav-links">
@@ -41,6 +44,7 @@ export function AppLayout({
           </NavLink>
         </div>
         <div className="nav-spacer" />
+        <GlobalSearch />
         {onSelectOrg && onCreateOrg ? (
           <OrgSwitcher
             orgs={orgs}

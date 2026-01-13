@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout';
 import {
@@ -9,6 +9,8 @@ import {
 } from '@/pages';
 import { useOrgs } from '@/hooks';
 import { OrgProvider } from '@/store/OrgContext';
+import { signalingClient } from '@/sync/SignalingClient';
+import { hashPassword } from '@/crypto';
 import type { Org } from '@/types';
 import './pages/pages.css';
 
@@ -20,8 +22,15 @@ function App() {
     needsOnboarding,
     selectOrg,
     createOrg,
+    updateCurrentOrg,
+    leaveOrg,
     refresh,
   } = useOrgs();
+
+  // Handler for when org is updated from within context
+  const handleOrgUpdate = useCallback((updatedOrg: Org) => {
+    updateCurrentOrg(updatedOrg);
+  }, [updateCurrentOrg]);
 
   // State for showing the create org modal
   const [showCreateOrg, setShowCreateOrg] = useState(false);
@@ -42,22 +51,47 @@ function App() {
     return org;
   };
 
-  // Handle joining an existing org (placeholder - will be implemented with P2P)
+  // Handle joining an existing org via share code
   const handleJoinOrg = async (
     shareCode: string,
-    password: string
+    password: string,
+    name: string
   ): Promise<void> => {
-    // TODO: Implement with Worker signaling
     if (!shareCode || !password) {
       throw new Error('Share code and password are required');
     }
-    throw new Error('P2P sync not yet implemented');
+
+    // Exchange share code for room ID
+    const { roomId } = await signalingClient.joinWithCode(shareCode);
+
+    // Hash the password for verification
+    const passwordHash = await hashPassword(password);
+
+    // Create a local org linked to this room
+    const org = await createOrg({
+      name: name || 'Shared Org',
+      color: '', // Auto-generated
+      isDefault: orgs.length === 0,
+      roomId,
+      passwordHash,
+    });
+
+    await refresh();
+    selectOrg(org.id);
+    setShowCreateOrg(false);
   };
 
   // Handle org selection
   const handleSelectOrg = (id: string) => {
     selectOrg(id);
   };
+
+  // Handle leaving current org (called from OrgContext)
+  const handleLeaveOrg = useCallback(async () => {
+    if (currentOrg) {
+      await leaveOrg(currentOrg.id);
+    }
+  }, [currentOrg, leaveOrg]);
 
   // Handle creating a new org from the switcher
   const handleCreateOrgClick = () => {
@@ -96,7 +130,7 @@ function App() {
 
   // Main app with org context
   return (
-    <OrgProvider org={currentOrg} key={currentOrg.id}>
+    <OrgProvider org={currentOrg} onOrgUpdate={handleOrgUpdate} onLeaveOrg={handleLeaveOrg} key={currentOrg.id}>
       <Routes>
         <Route
           element={

@@ -94,13 +94,42 @@ export function unloadOrgStore(orgId: string): void {
 }
 
 /**
- * Clear all data for an org
+ * Clear all data for an org (keeps the org itself)
  */
 export async function clearOrgData(orgId: string): Promise<void> {
   const store = await getOrgStore(orgId);
   store.doc.transact(() => {
     store.contactsMap.clear();
     store.eventsMap.clear();
+  });
+}
+
+/**
+ * Completely delete an org's Yjs data from IndexedDB
+ * This is for "leaving" an org - removes all local data permanently
+ */
+export async function deleteOrgData(orgId: string): Promise<void> {
+  // First unload the store if it's loaded
+  unloadOrgStore(orgId);
+
+  // Delete the IndexedDB database for this org
+  const dbName = `${DB_PREFIX}${orgId}`;
+  
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase(dbName);
+    request.onsuccess = () => {
+      console.log(`[Store] Deleted IndexedDB for org ${orgId}`);
+      resolve();
+    };
+    request.onerror = () => {
+      console.error(`[Store] Failed to delete IndexedDB for org ${orgId}`);
+      reject(request.error);
+    };
+    request.onblocked = () => {
+      console.warn(`[Store] Delete blocked for org ${orgId} - database still in use`);
+      // Still resolve - the delete will happen when connections close
+      resolve();
+    };
   });
 }
 

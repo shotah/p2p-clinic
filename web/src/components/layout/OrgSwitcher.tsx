@@ -6,6 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import type { Org } from '@/types';
+import { useOrgContext } from '@/store/useOrgStore';
 import './layout.css';
 
 interface OrgSwitcherProps {
@@ -23,6 +24,26 @@ export function OrgSwitcher({
 }: OrgSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Get sync state from context (may throw if not in provider, so we catch)
+  let syncStatus: 'disconnected' | 'connecting' | 'syncing' | 'error' = 'disconnected';
+  try {
+    const context = useOrgContext();
+    syncStatus = context.syncState.status;
+  } catch {
+    // Not in OrgProvider context, default to disconnected
+  }
+
+  const getSyncStatusColor = () => {
+    switch (syncStatus) {
+      case 'syncing': return '#22c55e';
+      case 'connecting': return '#eab308';
+      case 'error': return '#ef4444';
+      default: return null;
+    }
+  };
+  
+  const syncStatusColor = getSyncStatusColor();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -74,6 +95,13 @@ export function OrgSwitcher({
           style={{ backgroundColor: currentOrg?.color || '#6b7280' }}
         />
         <span className="org-name">{currentOrg?.name || 'No Org'}</span>
+        {syncStatusColor && (
+          <span 
+            className={`sync-indicator ${syncStatus}`}
+            style={{ backgroundColor: syncStatusColor }}
+            title={syncStatus === 'syncing' ? 'Syncing' : syncStatus === 'connecting' ? 'Connecting...' : 'Error'}
+          />
+        )}
         <span className="org-chevron">{isOpen ? '▲' : '▼'}</span>
       </button>
 

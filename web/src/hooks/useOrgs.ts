@@ -14,6 +14,7 @@ import {
   deleteOrg as deleteOrgInDB,
   generateRoomId,
 } from '@/store/orgs';
+import { deleteOrgData } from '@/store';
 
 // Storage key for the currently selected org ID
 const CURRENT_ORG_KEY = 'p2p-clinic-current-org';
@@ -26,7 +27,9 @@ export interface UseOrgsResult {
   selectOrg: (id: string) => Promise<void>;
   createOrg: (input: OrgInput) => Promise<Org>;
   updateOrg: (id: string, updates: Partial<OrgInput>) => Promise<void>;
+  updateCurrentOrg: (org: Org) => void;
   deleteOrg: (id: string) => Promise<void>;
+  leaveOrg: (id: string) => Promise<void>;
   createSharedOrg: (name: string) => Promise<Org>;
   refresh: () => Promise<void>;
 }
@@ -162,6 +165,44 @@ export function useOrgs(): UseOrgsResult {
     [loadOrgs, currentOrg?.id]
   );
 
+  // Update current org in state (called from OrgContext when org is modified)
+  const updateCurrentOrg = useCallback((org: Org) => {
+    setCurrentOrg(org);
+    // Also update in the orgs list
+    setOrgs(prev => prev.map(o => o.id === org.id ? org : o));
+  }, []);
+
+  // Leave an org completely (delete all local data and forget about it)
+  // For shared orgs: other peers keep their copies - we just forget locally
+  // Server cleanup happens naturally via TTL expiration
+  const leaveOrg = useCallback(
+    async (id: string): Promise<void> => {
+      // Delete the Yjs IndexedDB data for this org
+      await deleteOrgData(id);
+
+      // Delete the org metadata
+      await deleteOrgInDB(id);
+
+      // Refresh the orgs list
+      await loadOrgs();
+
+      // If we left the current org, switch to another
+      if (currentOrg?.id === id) {
+        const remaining = await getAllOrgs();
+        if (remaining.length > 0) {
+          const newCurrent = remaining.find((o) => o.isDefault) || remaining[0];
+          setCurrentOrg(newCurrent);
+          localStorage.setItem(CURRENT_ORG_KEY, newCurrent.id);
+        } else {
+          setCurrentOrg(null);
+          localStorage.removeItem(CURRENT_ORG_KEY);
+          setNeedsOnboarding(true);
+        }
+      }
+    },
+    [loadOrgs, currentOrg?.id]
+  );
+
   return {
     orgs,
     currentOrg,
@@ -170,7 +211,9 @@ export function useOrgs(): UseOrgsResult {
     selectOrg,
     createOrg,
     updateOrg,
+    updateCurrentOrg,
     deleteOrg,
+    leaveOrg,
     createSharedOrg,
     refresh,
   };
